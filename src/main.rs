@@ -15,7 +15,7 @@ fn main() {
 
     let state = contents.parse::<state::GameState>().unwrap();
     
-    println!("{:?}",board::free_for_player(vec![1,1], state.board, 0));
+    println!("{:?}",board::free_for_player(&vec![1,1], &state.board, 0));
 }
 
 

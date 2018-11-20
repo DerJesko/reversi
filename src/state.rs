@@ -33,7 +33,7 @@ fn generate_direction_vectors(dimensions: u32) -> Vec<Vec<i64>> {
         let mut current_vec = Vec::with_capacity(dimensions as usize);
         let mut current_val = i;
         let mut current_mod;
-        for j in 0..dimensions {
+        for _ in 0..dimensions {
             current_mod = current_val % 3;
             current_vec.push(current_mod - 1);
             current_val /= 3;
@@ -54,7 +54,7 @@ impl FromStr for GameState {
         let total_players = numbers.next().unwrap();
         println!("total players: {}", total_players);
 
-        let dimensions = numbers.next().unwrap();
+        let dimensions = numbers.next().unwrap() as usize;
 
         println!("dimensions: {}", dimensions);
 
@@ -62,7 +62,7 @@ impl FromStr for GameState {
         assert!(total_players > 1);
         assert!(dimensions > 0, "too little dimensions");
 
-        let mut size = Vec::with_capacity(dimensions as usize);
+        let mut size = Vec::with_capacity(dimensions);
         for _ in 0..dimensions {
             size.push(numbers.next().unwrap());
         }
@@ -75,7 +75,7 @@ impl FromStr for GameState {
                 None => break,
             }
             println!("New stone from player {}", current_stone_player);
-            let mut current_stone = Vec::with_capacity(dimensions as usize);
+            let mut current_stone = Vec::with_capacity(dimensions);
             for _ in 0..dimensions {
                 current_stone.push(numbers.next().unwrap());
             }
