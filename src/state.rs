@@ -21,9 +21,26 @@ impl Error for RevParseError {
 }
 
 pub struct GameState {
-    current_player: i64,
-    total_players: i64,
-    board: board::Board,
+    pub(crate) current_player: i64,
+    pub(crate) total_players: i64,
+    pub(crate) board: board::Board
+}
+
+fn generate_direction_vectors(dimensions: u32) -> Vec<Vec<i64>> {
+    let size = 3_i64.pow(dimensions);
+    let mut result = Vec::with_capacity(size as usize);
+    for i in 0..size {
+        let mut current_vec = Vec::with_capacity(dimensions as usize);
+        let mut current_val = i;
+        let mut current_mod;
+        for j in 0..dimensions {
+            current_mod = current_val % 3;
+            current_vec.push(current_mod - 1);
+            current_val /= 3;
+        }
+        result.push(current_vec)
+    }
+    return result;
 }
 
 impl FromStr for GameState {
@@ -72,6 +89,7 @@ impl FromStr for GameState {
                 dimensions: dimensions,
                 size: size,
                 stones: stones,
+                direction_vectors: generate_direction_vectors(dimensions as u32),
             },
         };
 
