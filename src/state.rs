@@ -4,6 +4,7 @@ use std::fmt;
 use std::str::FromStr;
 
 use board;
+use position::Position;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RevParseError;
@@ -26,7 +27,7 @@ pub struct GameState {
     pub(crate) board: board::Board
 }
 
-fn generate_direction_vectors(dimensions: u32) -> Vec<Vec<i64>> {
+fn generate_direction_vectors(dimensions: u32) -> Vec<Position> {
     let size = 3_i64.pow(dimensions);
     let mut result = Vec::with_capacity(size as usize);
     for i in 0..size {
@@ -38,7 +39,7 @@ fn generate_direction_vectors(dimensions: u32) -> Vec<Vec<i64>> {
             current_vec.push(current_mod - 1);
             current_val /= 3;
         }
-        result.push(current_vec)
+        result.push(Position{v: current_vec})
     }
     return result;
 }
@@ -79,7 +80,7 @@ impl FromStr for GameState {
             for _ in 0..dimensions {
                 current_stone.push(numbers.next().unwrap());
             }
-            stones.insert(current_stone, current_stone_player);
+            stones.insert(Position{v: current_stone}, current_stone_player);
         }
 
         let state = GameState {
