@@ -22,9 +22,9 @@ impl Error for RevParseError {
 }
 
 pub struct GameState {
-    pub(crate) current_player: i64,
-    pub(crate) total_players: i64,
-    pub(crate) board: board::Board,
+    current_player: i64,
+    total_players: i64,
+    board: board::Board,
 }
 
 impl FromStr for GameState {

@@ -1,15 +1,29 @@
 use std::ops::Index;
 
 #[derive(Eq, Hash, PartialEq, Debug)]
-pub struct Position {v: Vec<i64>}
+pub struct Position {
+    v: Vec<i64>,
+}
 
-impl Position{
+impl Position {
     pub fn new(v: Vec<i64>) -> Position {
-        return Position{v: v};
+        return Position { v: v };
     }
 
     pub fn add(&self, p: &Position) -> Position {
-        return Position{v: vec![]}
+        return Position { v: vec![] };
+    }
+}
+
+impl Clone for Position {
+    fn clone(&self) -> Position {
+        let mut result = Position {
+            v: Vec::with_capacity(self.v.len()),
+        };
+        for i in &self.v {
+            result.v.push(*i);
+        }
+        return result;
     }
 }
 
