@@ -4,6 +4,10 @@ use std::ops::Index;
 pub struct Position {v: Vec<i64>}
 
 impl Position{
+    pub fn new(v: Vec<i64>) -> Position {
+        return Position{v: v};
+    }
+
     pub fn add(&self, p: &Position) -> Position {
         return Position{v: vec![]}
     }

@@ -42,53 +42,82 @@ fn do_move(board: &mut Board, player: i64, set_stone: Vec<i64>) {
     return;
 }
 */
-fn possible_moves(board: &Board, player: i64) -> HashSet<Position> {
-    let mut result = HashSet::new();
-    for (v, p) in &board.stones {
-        if *p == player {
-            for i in free_for_player(v, board, player) {
-                result.insert(i);
+impl Board {
+    pub fn new(size: Vec<i64>, stones: HashMap<Position, i64>) -> Board {
+        let dimensions = size.len();
+        let direction_vectors = Board::generate_direction_vectors(dimensions as u32);
+        return Board {
+            dimensions: dimensions,
+            size: size,
+            stones: stones,
+            direction_vectors: direction_vectors,
+        };
+    }
+
+    fn generate_direction_vectors(dimensions: u32) -> Vec<Position> {
+        let size = 3_i64.pow(dimensions);
+        let mut result = Vec::with_capacity(size as usize);
+        for i in 0..size {
+            let mut current_vec = Vec::with_capacity(dimensions as usize);
+            let mut current_val = i;
+            let mut current_mod;
+            for _ in 0..dimensions {
+                current_mod = current_val % 3;
+                current_vec.push(current_mod - 1);
+                current_val /= 3;
+            }
+            result.push(Position::new(current_vec));
+        }
+        return result;
+    }
+
+    fn possible_moves(&self, player: i64) -> HashSet<Position> {
+        let mut result = HashSet::new();
+        for (v, p) in &self.stones {
+            if *p == player {
+                for i in self.free_for_player(v, player) {
+                    result.insert(i);
+                }
             }
         }
+        result.retain(|v| self.is_in_limit(v));
+        return result;
     }
-    result.retain(|v| is_in_limit(v, board));
-    return result;
-}
 
-fn is_in_limit(v: &Position, board: &Board) -> bool {
-    for i in 0..board.dimensions {
-        if v[i] < 0 || v[i] >= board.size[i] {
-            return false;
+    fn is_in_limit(&self, v: &Position) -> bool {
+        for i in 0..self.dimensions {
+            if v[i] < 0 || v[i] >= self.size[i] {
+                return false;
+            }
         }
+        return true;
     }
-    return true;
-}
-
-pub fn free_for_player(stone: &Position, board: &Board, player: i64) -> HashSet<Position> {
-    let mut result = HashSet::new();
-    for v in &board.direction_vectors {
-        let mut check_for = &stone.add(&v);
-        match board.stones.get(&check_for) {
-            Some(x) => {
-                if player != *x {
-                    loop {
-                        check_for = &check_for.add(&v);
-                        match board.stones.get(&check_for) {
-                            Some(y) => {
-                                if *y == player {
+    pub fn free_for_player(&self, stone: &Position, player: i64) -> HashSet<Position> {
+        let mut result = HashSet::new();
+        for v in &self.direction_vectors {
+            let mut check_for = stone.add(&v);
+            match self.stones.get(&check_for) {
+                Some(x) => {
+                    if player != *x {
+                        loop {
+                            check_for = check_for.add(&v);
+                            match self.stones.get(&check_for) {
+                                Some(y) => {
+                                    if *y == player {
+                                        break;
+                                    }
+                                }
+                                None => {
+                                    result.insert(check_for);
                                     break;
                                 }
-                            }
-                            None => {
-                                result.insert(check_for);
-                                break;
                             }
                         }
                     }
                 }
+                None => (),
             }
-            None => (),
         }
+        return result;
     }
-    return result;
 }

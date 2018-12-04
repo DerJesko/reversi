@@ -24,24 +24,7 @@ impl Error for RevParseError {
 pub struct GameState {
     pub(crate) current_player: i64,
     pub(crate) total_players: i64,
-    pub(crate) board: board::Board
-}
-
-fn generate_direction_vectors(dimensions: u32) -> Vec<Position> {
-    let size = 3_i64.pow(dimensions);
-    let mut result = Vec::with_capacity(size as usize);
-    for i in 0..size {
-        let mut current_vec = Vec::with_capacity(dimensions as usize);
-        let mut current_val = i;
-        let mut current_mod;
-        for _ in 0..dimensions {
-            current_mod = current_val % 3;
-            current_vec.push(current_mod - 1);
-            current_val /= 3;
-        }
-        result.push(Position{v: current_vec})
-    }
-    return result;
+    pub(crate) board: board::Board,
 }
 
 impl FromStr for GameState {
@@ -80,18 +63,13 @@ impl FromStr for GameState {
             for _ in 0..dimensions {
                 current_stone.push(numbers.next().unwrap());
             }
-            stones.insert(Position{v: current_stone}, current_stone_player);
+            stones.insert(Position::new(current_stone), current_stone_player);
         }
 
         let state = GameState {
             current_player: current_player,
             total_players: total_players,
-            board: board::Board {
-                dimensions: dimensions,
-                size: size,
-                stones: stones,
-                direction_vectors: generate_direction_vectors(dimensions as u32),
-            },
+            board: board::Board::new(size, stones),
         };
 
         Ok(state)
