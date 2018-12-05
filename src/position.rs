@@ -11,7 +11,17 @@ impl Position {
     }
 
     pub fn add(&self, p: &Position) -> Position {
-        return Position { v: vec![] };
+        let mut result = Vec::with_capacity(self.v.len());
+        for i in 0..self.v.len() {
+            result.push(self.v[i] + p.v[i]);
+        }
+        return Position { v: result };
+    }
+
+    pub fn add_to(&mut self, p: &Position) {
+        for i in 0..self.v.len() {
+            self.v[i] += p.v[i];
+        }
     }
 }
 

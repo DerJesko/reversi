@@ -39,17 +39,17 @@ impl Board {
         return result;
     }
 
-    fn do_move(board: &mut Board, player: i64, set_stone: Position) {
-        for v in &board.direction_vectors {
+    fn do_move(&mut self, player: i64, set_stone: Position) {
+        for v in &self.direction_vectors {
             let mut check_for = set_stone.clone();
             let mut insert_if_correct = HashSet::new();
             let mut correct_direction = false;
             loop {
-                check_for = v.add(&check_for);
-                match board.stones.get(&check_for) {
+                check_for.add_to(&v);
+                match self.stones.get(&check_for) {
                     Some(x) => {
                         if player != *x {
-                            insert_if_correct.insert(check_for);
+                            insert_if_correct.insert(check_for.clone());
                         } else {
                             correct_direction = true;
                             break;
@@ -63,11 +63,11 @@ impl Board {
 
             if correct_direction {
                 for i in insert_if_correct {
-                    board.stones.insert(i, player);
+                    self.stones.insert(i, player);
                 }
             }
         }
-        board.stones.insert(set_stone, player);
+        self.stones.insert(set_stone, player);
         return;
     }
 
