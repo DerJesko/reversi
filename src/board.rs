@@ -1,5 +1,4 @@
-use std::collections::HashMap;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 use position::Position;
 
@@ -39,7 +38,7 @@ impl Board {
         return result;
     }
 
-    fn do_move(&mut self, player: i64, set_stone: Position) {
+    pub fn do_move(&mut self, player: i64, set_stone: Position) {
         for v in &self.direction_vectors {
             let mut check_for = set_stone.clone();
             let mut insert_if_correct = HashSet::new();
@@ -71,7 +70,7 @@ impl Board {
         return;
     }
 
-    fn possible_moves(&self, player: i64) -> HashSet<Position> {
+    pub fn possible_moves(&self, player: i64) -> HashSet<Position> {
         let mut result = HashSet::new();
         for (v, p) in &self.stones {
             if *p == player {
@@ -92,7 +91,7 @@ impl Board {
         }
         return true;
     }
-    pub fn free_for_player(&self, stone: &Position, player: i64) -> HashSet<Position> {
+    fn free_for_player(&self, stone: &Position, player: i64) -> HashSet<Position> {
         let mut result = HashSet::new();
         for v in &self.direction_vectors {
             let mut check_for = stone.add(&v);

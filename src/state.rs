@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::error::Error;
 use std::fmt;
 use std::str::FromStr;
@@ -25,6 +25,21 @@ pub struct GameState {
     current_player: i64,
     total_players: i64,
     board: board::Board,
+}
+
+impl GameState {
+    pub fn do_move(&mut self, set_stone: Position) {
+        self.board.do_move(self.current_player, set_stone);
+        self.current_player = (self.current_player + 1) % self.total_players;
+    }
+
+    pub fn current_player(&self) -> i64 {
+        return self.current_player;
+    }
+
+    pub fn possible_moves(&self) -> HashSet<Position> {
+        return self.board.possible_moves(self.current_player);
+    }
 }
 
 impl FromStr for GameState {
