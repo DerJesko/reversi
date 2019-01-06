@@ -48,14 +48,10 @@ impl FromStr for GameState {
         let mut numbers = s.split_whitespace().map(|e| e.parse::<i64>().unwrap());
 
         let current_player = numbers.next().unwrap();
-        println!("current player: {}", current_player);
 
         let total_players = numbers.next().unwrap();
-        println!("total players: {}", total_players);
 
         let dimensions = numbers.next().unwrap() as usize;
-
-        println!("dimensions: {}", dimensions);
 
         assert!(current_player < total_players);
         assert!(total_players > 1);
@@ -73,7 +69,6 @@ impl FromStr for GameState {
                 Some(x) => current_stone_player = x,
                 None => break,
             }
-            println!("New stone from player {}", current_stone_player);
             let mut current_stone = Vec::with_capacity(dimensions);
             for _ in 0..dimensions {
                 current_stone.push(numbers.next().unwrap());
@@ -88,5 +83,15 @@ impl FromStr for GameState {
         };
 
         Ok(state)
+    }
+}
+
+impl fmt::Display for GameState {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{} {} {}",
+            self.current_player, self.total_players, self.board
+        )
     }
 }

@@ -1,4 +1,5 @@
 use std::collections::{HashMap, HashSet};
+use std::fmt;
 
 use position::Position;
 
@@ -118,5 +119,19 @@ impl Board {
             }
         }
         return result;
+    }
+}
+
+impl fmt::Display for Board {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}\n", self.dimensions);
+        for i in 0..self.dimensions {
+            write!(f, "{} ", self.size[i]);
+        }
+        write!(f, "\n");
+        for (k, v) in &self.stones {
+            write!(f, "{} {}\n", v, k);
+        }
+        write!(f, "")
     }
 }

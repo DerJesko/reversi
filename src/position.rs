@@ -1,3 +1,4 @@
+use std::fmt;
 use std::ops::Index;
 
 #[derive(Eq, Hash, PartialEq, Debug)]
@@ -42,5 +43,14 @@ impl Index<usize> for Position {
 
     fn index(&self, index: usize) -> &i64 {
         return &self.v[index];
+    }
+}
+
+impl fmt::Display for Position {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        for i in 0..self.v.len() {
+            write!(f, "{} ", self.v[i]);
+        }
+        write!(f, "")
     }
 }
