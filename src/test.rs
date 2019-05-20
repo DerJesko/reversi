@@ -1,6 +1,6 @@
 mod board;
-pub mod position;
-pub mod state;
+mod position;
+mod state;
 
 #[cfg(test)]
 mod tests {

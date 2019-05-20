@@ -71,6 +71,17 @@ impl Board {
         return;
     }
 
+    pub fn is_over(&self) -> bool {
+        let mut possible_winner_option = None;
+        for (_,player) in &self.stones {
+            match possible_winner_option {
+                None => {possible_winner_option= Some(player);},
+                Some(possible_winner) =>  if possible_winner != player {return false;}
+            }
+        }
+        return true;
+    }
+
     pub fn possible_moves(&self, player: i64) -> HashSet<Position> {
         let mut result = HashSet::new();
         for (v, p) in &self.stones {
@@ -124,13 +135,13 @@ impl Board {
 
 impl fmt::Display for Board {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}\n", self.dimensions);
+        write!(f, "{}\n", self.dimensions)?;
         for i in 0..self.dimensions {
-            write!(f, "{} ", self.size[i]);
+            write!(f, "{} ", self.size[i])?;
         }
-        write!(f, "\n");
+        write!(f, "\n")?;
         for (k, v) in &self.stones {
-            write!(f, "{} {}\n", v, k);
+            write!(f, "{} {}\n", v, k)?;
         }
         write!(f, "")
     }

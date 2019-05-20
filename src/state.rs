@@ -40,6 +40,10 @@ impl GameState {
     pub fn possible_moves(&self) -> HashSet<Position> {
         return self.board.possible_moves(self.current_player);
     }
+
+    pub fn is_over(&self) -> bool {
+        self.board.is_over()
+    }
 }
 
 impl FromStr for GameState {
