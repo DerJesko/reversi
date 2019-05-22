@@ -34,15 +34,23 @@ impl GameState {
     }
 
     pub fn current_player(&self) -> i64 {
-        return self.current_player;
+        self.current_player
     }
 
     pub fn possible_moves(&self) -> HashSet<Position> {
-        return self.board.possible_moves(self.current_player);
+        self.board.possible_moves(self.current_player)
+    }
+
+    pub fn current_player_has_stone(&self) -> bool {
+        self.board.has_stone(self.current_player())
     }
 
     pub fn is_over(&self) -> bool {
         self.board.is_over()
+    }
+
+    pub fn who_won(&self) -> i64 {
+        self.board.who_won()
     }
 }
 

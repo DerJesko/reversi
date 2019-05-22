@@ -23,14 +23,17 @@ pub fn main() {
     }
 
     while !game_state.is_over() {
-        println!("The current board looks like this:\n{}", game_state);
+        print!("The current board looks like this:\n{}", game_state);
         let possible_moves: Vec<position::Position> =
             game_state.possible_moves().iter().cloned().collect();
         if possible_moves.len() == 0 {
-            println!(
-                "You can't do any more moves. You lost. Your stones will be removed from the board"
-            );
-            return;
+            if game_state.current_player_has_stone() {
+                println!(
+                    "Player {} has no possible move and therefore loses.\nAll of its stones will be removed",//TODO
+                    game_state.current_player()
+                );
+            }
+            continue;
         }
         println!(
             "All the possible moves for player {} are:",
@@ -43,13 +46,21 @@ pub fn main() {
         }
         let mut selected_move;
         loop {
-            println!("Which move do you want to make");
+            println!("Type a number in order to make the move or 's' to save the game");
             let mut input = String::new();
             match io::stdin().read_line(&mut input) {
                 Ok(_) => {
-                    match input.parse::<i64>() {
-                        Ok(n) => selected_move = n,
-                        Err(_) => continue,
+                    let first_word = input.split_whitespace().next();
+                    // TODO save game
+                    match first_word {
+                        Some(s) => match s.parse::<i64>() {
+                            Ok(n) => selected_move = n,
+                            Err(_) => continue,
+                        },
+                        None => {
+                            println!("Please enter something other than whitespace");
+                            continue;
+                        }
                     }
                     if selected_move >= 0 && selected_move < (possible_moves.len() as i64) {
                         break;
@@ -62,4 +73,6 @@ pub fn main() {
         }
         game_state.do_move(possible_moves[selected_move as usize].clone());
     }
+    print!("The game state is\n{}", game_state);
+    println!("Player {} won", game_state.who_won());
 }

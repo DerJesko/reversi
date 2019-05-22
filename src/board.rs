@@ -73,13 +73,35 @@ impl Board {
 
     pub fn is_over(&self) -> bool {
         let mut possible_winner_option = None;
-        for (_,player) in &self.stones {
+        for (_, player) in &self.stones {
             match possible_winner_option {
-                None => {possible_winner_option= Some(player);},
-                Some(possible_winner) =>  if possible_winner != player {return false;}
+                None => {
+                    possible_winner_option = Some(player);
+                }
+                Some(possible_winner) => {
+                    if possible_winner != player {
+                        return false;
+                    }
+                }
             }
         }
         return true;
+    }
+
+    pub fn who_won(&self) -> i64 {
+        for (_, player) in &self.stones {
+            return *player;
+        }
+        panic!("Your board must be empty!")
+    }
+
+    pub fn has_stone(&self, player: i64) -> bool {
+        for (v, p) in &self.stones {
+            if *p == player {
+                return true;
+            }
+        }
+        false
     }
 
     pub fn possible_moves(&self, player: i64) -> HashSet<Position> {
