@@ -96,7 +96,7 @@ impl Board {
     }
 
     pub fn has_stone(&self, player: i64) -> bool {
-        for (v, p) in &self.stones {
+        for (_, p) in &self.stones {
             if *p == player {
                 return true;
             }

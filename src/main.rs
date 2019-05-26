@@ -4,8 +4,44 @@ mod state;
 
 use std::env;
 use std::fs;
+use std::fs::File;
 use std::io;
+use std::io::Write;
 use std::str::FromStr;
+
+fn save_state(state: &state::GameState) {
+    loop {
+        println!("What file do you want to save to?");
+        let mut input = String::new();
+        match io::stdin().read_line(&mut input) {
+            Err(e) => {
+                println!("received error '{}' when trying to read your input", e);
+                continue;
+            }
+            _ => {}
+        }
+        let mut output = match File::create(input.clone()) {
+            Ok(o) => o,
+            Err(e) => {
+                println!(
+                    "received error '{}' when trying to create file '{}.",
+                    e, input
+                );
+                continue;
+            }
+        };
+        match write!(output, "{}", state) {
+            Ok(_) => break,
+            Err(e) => {
+                println!(
+                    "received error '{}' when trying to write to file '{}.",
+                    e, input
+                );
+                continue;
+            }
+        };
+    }
+}
 
 pub fn main() {
     let args: Vec<String> = env::args().collect();
@@ -50,13 +86,16 @@ pub fn main() {
             let mut input = String::new();
             match io::stdin().read_line(&mut input) {
                 Ok(_) => {
-                    let first_word = input.split_whitespace().next();
-                    // TODO save game
-                    match first_word {
-                        Some(s) => match s.parse::<i64>() {
-                            Ok(n) => selected_move = n,
-                            Err(_) => continue,
-                        },
+                    match input.split_whitespace().next() {
+                        Some(s) => {
+                            if s.to_lowercase() == "s" {
+                                save_state(&game_state);
+                            }
+                            match s.parse::<i64>() {
+                                Ok(n) => selected_move = n,
+                                Err(_) => continue,
+                            }
+                        }
                         None => {
                             println!("Please enter something other than whitespace");
                             continue;
