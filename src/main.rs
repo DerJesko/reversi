@@ -2,6 +2,7 @@ pub mod board;
 pub mod position;
 mod state;
 
+use std::collections::HashMap;
 use std::env;
 use std::fs;
 use std::fs::File;
@@ -43,13 +44,95 @@ fn save_state(state: &state::GameState) {
     }
 }
 
+fn input_number_geq_n(message: &str, n: i64) -> i64 {
+    let number;
+    loop {
+        println!("{}", message);
+        let mut input = String::new();
+        match io::stdin().read_line(&mut input) {
+            Ok(_) => match input.split_whitespace().next() {
+                Some(s) => match s.parse::<i64>() {
+                    Ok(m) => {
+                        if m < n {
+                            continue;
+                        }
+                        number = m;
+                        break;
+                    }
+                    Err(_) => continue,
+                },
+                None => continue,
+            },
+            Err(_) => {}
+        }
+    }
+    number
+}
+
+fn new_game_state() -> state::GameState {
+    let players = input_number_geq_n("How many players do you want in the game?", 1);
+    let dimensions = input_number_geq_n("How many dimensions do you want in the board to have?", 1);
+    let mut size = Vec::with_capacity(dimensions as usize);
+    for i in 0..dimensions {
+        size.push(input_number_geq_n(
+            &format!("How big do you want to have the board in dimension {}", i),
+            1,
+        ))
+    }
+    let mut stones: HashMap<position::Position, i64> = HashMap::new();
+    'outer: loop {
+        println!("Write 'd' if you are done entering stones.\nIf you want to enter a stone enter a list of dimension + 1 integers. The first one is the player and rest are the position in that dimension\nThe numbers need to be seperated by whitespaces.");
+        let mut input = String::new();
+        match io::stdin().read_line(&mut input) {
+            Ok(_) => {}
+            Err(_) => continue,
+        }
+        let player;
+        match input.split_whitespace().next() {
+            Some(s) => {
+                if s.to_lowercase() == "d" {
+                    break;
+                }
+                match s.parse::<i64>() {
+                    Ok(p) => {
+                        if p >= players {
+                            continue 'outer;
+                        }
+                        player = p
+                    }
+                    Err(_) => continue,
+                };
+            }
+            None => continue,
+        }
+        let mut v = Vec::with_capacity(dimensions as usize);
+        for i in 0..dimensions {
+            match input.split_whitespace().next() {
+                Some(s) => {
+                    match s.parse::<i64>() {
+                        Ok(p) => {
+                            if p >= size[(i as usize)] {
+                                continue 'outer;
+                            }
+                            v.push(p)
+                        }
+                        Err(_) => continue 'outer,
+                    };
+                }
+                None => continue 'outer,
+            }
+        }
+        stones.insert(position::Position::new(v), player);
+    }
+    state::GameState::new(players, board::Board::new(size, stones))
+}
+
 pub fn main() {
     let args: Vec<String> = env::args().collect();
     let mut game_state;
     if args.len() == 1 {
         println!("The functionality to start a new game has not yet been implemented");
-        // TODO
-        return;
+        game_state = new_game_state();
     } else if args.len() == 2 {
         let contents = fs::read_to_string(&args[1]).expect("Something went wrong reading the file");
         game_state = state::GameState::from_str(&contents).unwrap();
@@ -107,6 +190,7 @@ pub fn main() {
                 }
                 Err(_) => {
                     println!("This is not a correct move");
+                    continue;
                 }
             }
         }

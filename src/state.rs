@@ -28,6 +28,14 @@ pub struct GameState {
 }
 
 impl GameState {
+    pub fn new(total_players: i64, board: board::Board) -> GameState {
+        GameState {
+            current_player: 0,
+            total_players,
+            board,
+        }
+    }
+
     pub fn do_move(&mut self, set_stone: Position) {
         self.board.do_move(self.current_player, set_stone);
         self.current_player = (self.current_player + 1) % self.total_players;
