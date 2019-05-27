@@ -45,6 +45,10 @@ impl GameState {
         self.current_player
     }
 
+    pub fn remove_current_player(&mut self) {
+        self.board.remove_stones_of_player(self.current_player)
+    }
+
     pub fn possible_moves(&self) -> HashSet<Position> {
         self.board.possible_moves(self.current_player)
     }

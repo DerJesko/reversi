@@ -104,6 +104,10 @@ impl Board {
         false
     }
 
+    pub fn remove_stones_of_player(&mut self, player: i64) {
+        self.stones.retain(|_, v| *v != player);
+    }
+
     pub fn possible_moves(&self, player: i64) -> HashSet<Position> {
         let mut result = HashSet::new();
         for (v, p) in &self.stones {

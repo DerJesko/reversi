@@ -148,9 +148,10 @@ pub fn main() {
         if possible_moves.len() == 0 {
             if game_state.current_player_has_stone() {
                 println!(
-                    "Player {} has no possible move and therefore loses.\nAll of its stones will be removed",//TODO
+                    "Player {} has no possible move and therefore loses.\nAll of its stones will be removed",
                     game_state.current_player()
                 );
+                game_state.remove_current_player();
             }
             continue;
         }
